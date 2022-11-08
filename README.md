@@ -7,7 +7,6 @@
 3. Analyze .wav files using [Audacity](https://github.com/audacity)
 
 4. Use [wav2csv.py](http://wav2csv.py/) to convert .wav files to .csv files and analyze them
-    - Files converted by [wav2csv.py](http://wav2csv.py/) could not be uploaded due to the GitHub file size limit.
     
 5. Analyze .wav files with Python using Colab
     <img width="80%" src="/rpic/colab.png"/>
