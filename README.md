@@ -4,7 +4,6 @@
 
 2. Repeat the abnormal behavior (nodding of the head) between 2 HackRF one and extract the .wav file
     <img width="60%" src="/rpic/environment.jpeg"/>
-    <img width="80%" src="/rpic/gnuradio.png"/>
 
 3. Analyze .wav files using [Audacity](https://github.com/audacity)
 
