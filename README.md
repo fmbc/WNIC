@@ -17,3 +17,4 @@
 6. Based on step 5, write anomaly detection code
 
 7. Use piezo buzzer for the Alarm sound , [twilio](https://www.twilio.com/) for text transmission
+    <img width="80%" src="/rpic/buztwi.gif"/>
