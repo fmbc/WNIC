@@ -1,35 +1,44 @@
+#----------------------------------------------------------------------------
+# Project Name : Analysis of behavior in the vehicle using wireless network
+# Author : WNIC (Jihye Shin  / Sohee Won / Seorin Jung)
+# Data : 2022.11.09
+#----------------------------------------------------------------------------
+
+# Use wav files for visualization and analysis.
 import numpy as np
 import librosa, librosa.display 
 import matplotlib.pyplot as plt
 
-#피에조부저
+# Used for piezo buzzer
 import RPi.GPIO as GPIO
 import time
 
-# 문자전송
+# Using for text transmission
 import datetime
 from twilio.rest import Client
 
 FIG_SIZE = (15,10)
 
-file = "p4.wav"
+file = "head_data.wav"
 
 sig, sr = librosa.load(file, sr=22050)
 
 print(sig,sig.shape)
 
+# Wavefrom Visualization
 plt.figure(figsize=FIG_SIZE)
 librosa.display.waveshow(sig, sr, alpha=0.5)
-plt.xlabel("Time (s)")  # 시간
-plt.ylabel("Amplitude") # 진폭
-plt.title("Waveform")
-plt.xlim(0,4)
-plt.ylim(-0.075, 0.06)
+plt.xlabel("Time (s)")                     
+plt.ylabel("Amplitude")                     
+plt.title("Waveform")                        
+plt.xlim(0,4)                               
+plt.ylim(-0.075, 0.06)                        
 
-# 신체 이상 감지
-if sr>= 0.04:
-  print("\n***** [WNIC] DETECTED!! *****\n")
-  # 경고음
+# body abnormality detection
+if sr>= 0.04:                                 # Detects abnormalities in the body at a specific frequency
+  print("\n*****[WNIC] detected!!*****\n")    # Output that it was detected
+  
+  # Warning Sound Output
   buzzer = 18
   GPIO.setmode(GPIO.BCM)
   GPIO.setup(buzzer, GPIO.OUT)
@@ -42,9 +51,9 @@ if sr>= 0.04:
   pwn.stop()
   GPIO.cleanup()
 
-  # 문자 전송
+  # Text Transfer Part
   account_sid = 'AC119bdb4229d503ede749ebff8cbfe2f6'
-  auth_token = '8955b71ac558117ba5d57832cc3cc1bb'
+  auth_token = '183b2224b2486342cfaab6bbb5314451'
   client = Client(account_sid, auth_token)
       
   message = client.messages.create(
@@ -54,15 +63,16 @@ if sr>= 0.04:
 
   print(message.sid, datetime.datetime.now())
 
+# FFT(Fast Fourier Transform) : Identify and visualize the amount of frequency.
 fft = np.fft.fft(sig)
 
-# 복소공간 값 절댓갑 취해서, magnitude 구하기
+# Find 'magnitude' as the absolute value of the complex space value
 magnitude = np.abs(fft) 
 
-# Frequency 값 만들기
+# Create Frequency Value
 f = np.linspace(0,sr,len(magnitude))
 
-# 푸리에 변환을 통과한 specturm은 대칭구조로 나와서 high frequency 부분 절반을 날려고 앞쪽 절반만 사용한다.
+# The 'spectrum' that passes through the Fourier transform comes out in a symmetrical structure and uses only the front half to fly half of the 'high frequency' part
 left_spectrum = magnitude[:int(len(magnitude)/2)]
 left_f = f[:int(len(magnitude)/2)]
 
@@ -72,39 +82,32 @@ plt.xlabel("Frequency")
 plt.ylabel("Magnitude")
 plt.title("Power spectrum")
 plt.ylim([0, 150])
-#plt.xlim([])
 
-# STFT -> spectrogram
-hop_length = 512  # 전체 frame 수
-n_fft = 2048  # frame 하나당 sample 수
+# STFT(Short-Time Fourier Transform)
+hop_length = 512          
+n_fft = 2048              
 
-# calculate duration hop length and window in seconds
 hop_length_duration = float(hop_length)/sr
 n_fft_duration = float(n_fft)/sr
 
-# STFT
 stft = librosa.stft(sig, n_fft=n_fft, hop_length=hop_length)
 
-# 복소공간 값 절댓값 취하기
 magnitude = np.abs(stft)
-
-# magnitude > Decibels 
+ 
 log_spectrogram = librosa.amplitude_to_db(magnitude)
 
-# display spectrogram
+# STFT Visualization
 plt.figure(figsize=FIG_SIZE)
 librosa.display.specshow(log_spectrogram, sr=sr, hop_length=hop_length)
 plt.xlabel("Time")
 plt.ylabel("Frequency")
 plt.colorbar(format="%+2.0f dB")
 plt.title("Spectrogram (dB)")
-#plt.xlim([0,3])
 
-# MFCCs
-# extract 13 MFCCs
+# MFCC(Mel Frequency Cepstral Coefficient)
 MFCCs = librosa.feature.mfcc(sig, sr, n_fft=n_fft, hop_length=hop_length, n_mfcc=13)
 
-# display MFCCs
+# MFCCs Visualization
 plt.figure(figsize=FIG_SIZE)
 librosa.display.specshow(MFCCs, sr=sr, hop_length=hop_length)
 plt.xlabel("Time")
@@ -112,5 +115,4 @@ plt.ylabel("MFCC coefficients")
 plt.colorbar()
 plt.title("MFCCs")
 
-# show plots
 plt.show()
