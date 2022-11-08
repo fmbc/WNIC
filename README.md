@@ -10,7 +10,7 @@
     - Files converted by [wav2csv.py](http://wav2csv.py/) could not be uploaded due to the GitHub file size limit.
     
 5. Analyze .wav files with Python using Colab
-
+    <img width="80%" src="{이미지 경로}"/>
 6. Based on step 5, write anomaly detection code
 
 7. Use piezo buzzer for the Alarm sound , [twilio](https://www.twilio.com/) for text transmission
