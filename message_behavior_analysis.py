@@ -28,7 +28,7 @@ plt.ylim(-0.075, 0.06)
 
 # 신체 이상 감지
 if sr>= 0.04:
-  print("warning")
+  print("\n***** [WNIC] DETECTED!! *****\n")
   # 경고음
   buzzer = 18
   GPIO.setmode(GPIO.BCM)
